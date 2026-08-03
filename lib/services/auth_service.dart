@@ -1,0 +1,3 @@
+class AuthService {
+  // Authentication Service
+}
