@@ -33,7 +33,13 @@ class TrackOrderScreen extends StatelessWidget {
                 leading: GlassCard(
                   borderRadius: AppRadius.radiusFull,
                   padding: const EdgeInsets.all(AppSpacing.sm + 2),
-                  onTap: () => context.pop(),
+                  onTap: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
                   child: const Icon(Icons.arrow_back_rounded, size: 20, color: AppColors.primary),
                 ),
               ),
