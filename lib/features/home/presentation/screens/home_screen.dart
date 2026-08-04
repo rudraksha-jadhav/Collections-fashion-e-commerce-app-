@@ -129,11 +129,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         const Icon(Icons.timer_outlined, color: AppColors.primaryContainer, size: 20),
                         const SizedBox(width: AppSpacing.xs),
-                        Text(
-                          'EXCLUSIVE VIP DROP #04',
-                          style: AppTextStyles.caption.copyWith(color: AppColors.primaryContainer, fontWeight: FontWeight.bold),
+                        Expanded(
+                          child: Text(
+                            'VIP DROP #04',
+                            style: AppTextStyles.caption.copyWith(color: AppColors.primaryContainer, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        const Spacer(),
+                        const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
