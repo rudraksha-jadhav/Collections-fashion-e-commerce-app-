@@ -9,7 +9,6 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
-import '../../../../core/widgets/collections_bottom_nav.dart';
 import '../../../../core/widgets/navigation/top_header.dart';
 import '../providers/cart_provider.dart';
 
@@ -20,7 +19,6 @@ class CartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cartItems = ref.watch(cartProvider);
     final totalPrice = ref.watch(cartTotalProvider);
-    final cartCount = ref.watch(cartCountProvider);
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
@@ -147,15 +145,6 @@ class CartScreen extends ConsumerWidget {
                 ),
               ),
             ),
-          CollectionsBottomNav(
-            currentIndex: 2,
-            cartItemCount: cartCount,
-            onTap: (index) {
-              if (index == 0) context.go('/home');
-              if (index == 1) context.go('/discover');
-              if (index == 3) context.go('/settings');
-            },
-          ),
         ],
       ),
     );

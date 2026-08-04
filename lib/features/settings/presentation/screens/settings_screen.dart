@@ -6,7 +6,6 @@ import '../../../../app/theme/app_radius.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
-import '../../../../core/widgets/collections_bottom_nav.dart';
 import '../../../../core/widgets/navigation/top_header.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -54,14 +53,6 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          CollectionsBottomNav(
-            currentIndex: 3,
-            onTap: (index) {
-              if (index == 0) context.go('/home');
-              if (index == 1) context.go('/discover');
-              if (index == 2) context.go('/cart');
-            },
           ),
         ],
       ),

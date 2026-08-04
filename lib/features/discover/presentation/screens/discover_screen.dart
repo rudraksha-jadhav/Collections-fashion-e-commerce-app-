@@ -9,7 +9,6 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
 import '../../../../core/widgets/cards/product_card.dart';
-import '../../../../core/widgets/collections_bottom_nav.dart';
 import '../../../../core/widgets/navigation/top_header.dart';
 
 class DiscoverScreen extends StatelessWidget {
@@ -179,15 +178,6 @@ class DiscoverScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          CollectionsBottomNav(
-            currentIndex: 1,
-            onTap: (index) {
-              if (index == 0) context.go('/home');
-              if (index == 1) context.go('/discover');
-              if (index == 2) context.go('/cart');
-              if (index == 3) context.go('/settings');
-            },
           ),
         ],
       ),

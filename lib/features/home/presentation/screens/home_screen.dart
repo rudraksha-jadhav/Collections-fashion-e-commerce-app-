@@ -8,7 +8,6 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
 import '../../../../core/widgets/cards/product_card.dart';
 import '../../../../core/widgets/category_chip.dart';
-import '../../../../core/widgets/collections_bottom_nav.dart';
 import '../../../../core/widgets/navigation/section_title.dart';
 import '../../../../core/widgets/navigation/top_header.dart';
 import '../../../../core/widgets/notifications/glass_toast.dart';
@@ -54,8 +53,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cartCount = ref.watch(cartCountProvider);
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -150,15 +147,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ],
               ),
             ),
-          ),
-          CollectionsBottomNav(
-            currentIndex: 0,
-            cartItemCount: cartCount,
-            onTap: (index) {
-              if (index == 1) context.go('/discover');
-              if (index == 2) context.go('/cart');
-              if (index == 3) context.go('/settings');
-            },
           ),
         ],
       ),
