@@ -14,18 +14,21 @@ class CollectionsBottomNav extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onTap,
-    this.cartItemCount = 2,
+    this.cartItemCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final bottomOffset = bottomInset > 0 ? bottomInset + 8 : 20.0;
+
     return Positioned(
-      bottom: 20,
+      bottom: bottomOffset,
       left: AppSpacing.lg,
       right: AppSpacing.lg,
       child: GlassCard(
         borderRadius: AppRadius.radiusFull,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [

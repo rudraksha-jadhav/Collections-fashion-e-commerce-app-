@@ -21,6 +21,7 @@ class CartScreen extends ConsumerWidget {
     final cartItems = ref.watch(cartProvider);
     final totalPrice = ref.watch(cartTotalProvider);
     final cartCount = ref.watch(cartCountProvider);
+    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -28,7 +29,7 @@ class CartScreen extends ConsumerWidget {
         children: [
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(left: AppSpacing.lg, right: AppSpacing.lg, top: AppSpacing.sm, bottom: 180),
+              padding: EdgeInsets.only(left: AppSpacing.lg, right: AppSpacing.lg, top: AppSpacing.sm, bottom: cartItems.isNotEmpty ? 190 : 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -122,7 +123,7 @@ class CartScreen extends ConsumerWidget {
           ),
           if (cartItems.isNotEmpty)
             Positioned(
-              bottom: 80,
+              bottom: bottomInset > 0 ? bottomInset + 76 : 88,
               left: AppSpacing.lg,
               right: AppSpacing.lg,
               child: GlassCard(
