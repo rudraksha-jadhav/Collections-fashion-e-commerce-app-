@@ -143,6 +143,7 @@ class CategoriesScreen extends StatelessWidget {
             currentIndex: 1,
             onTap: (index) {
               if (index == 0) context.go('/home');
+              if (index == 1) context.go('/discover');
               if (index == 2) context.go('/cart');
               if (index == 3) context.go('/settings');
             },

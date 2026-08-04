@@ -156,7 +156,7 @@ class _CartScreenState extends State<CartScreen> {
             currentIndex: 2,
             onTap: (index) {
               if (index == 0) context.go('/home');
-              if (index == 1) context.go('/categories');
+              if (index == 1) context.go('/discover');
               if (index == 3) context.go('/settings');
             },
           ),
