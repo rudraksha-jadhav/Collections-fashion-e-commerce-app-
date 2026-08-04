@@ -68,16 +68,27 @@ class CartState {
   }
 
   double get discountAmount {
-    if (appliedCoupon == null) return 0.0;
+    if (appliedCoupon == null || items.isEmpty) return 0.0;
     if (appliedCoupon!.percentageDiscount > 0) {
       return subtotal * (appliedCoupon!.percentageDiscount / 100);
     }
     return appliedCoupon!.flatDiscount;
   }
 
+  double get platformFee {
+    return items.isEmpty ? 0.0 : 2.50;
+  }
+
+  double get shippingFee {
+    if (items.isEmpty) return 0.0;
+    if (subtotal >= 300.0) return 0.0; // Free express shipping above $300
+    return 15.00;
+  }
+
   double get finalTotal {
-    final result = subtotal - discountAmount;
-    return result < 0 ? 0.0 : result;
+    if (items.isEmpty) return 0.0;
+    final total = subtotal - discountAmount + platformFee + shippingFee;
+    return total < 0 ? 0.0 : total;
   }
 
   int get totalItemCount {

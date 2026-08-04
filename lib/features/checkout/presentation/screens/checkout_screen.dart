@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/theme/app_colors.dart';
@@ -8,20 +9,25 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../settings/presentation/providers/currency_provider.dart';
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   int _selectedPayment = 0;
   final List<String> _paymentMethods = ['Apple Pay', 'Credit Card (•••• 9841)', 'Google Pay'];
 
   @override
   Widget build(BuildContext context) {
+    final cartState = ref.watch(cartProvider);
+    final currencyNotifier = ref.watch(currencyProvider.notifier);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -36,7 +42,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   GlassCard(
                     borderRadius: AppRadius.radiusFull,
                     padding: const EdgeInsets.all(AppSpacing.sm + 2),
-                    onTap: () => context.pop(),
+                    onTap: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/home');
+                      }
+                    },
                     child: const Icon(Icons.arrow_back_rounded, size: 20, color: AppColors.primary),
                   ),
                   Text(
@@ -117,39 +129,69 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       }),
                     ).animate().fadeIn(delay: 200.ms),
                     const SizedBox(height: AppSpacing.lg),
+
+                    // Bill Breakdown Section
                     GlassCard(
                       padding: const EdgeInsets.all(AppSpacing.md),
-                      onTap: () => context.push('/cart/coupons'),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.local_offer_outlined, color: AppColors.primaryContainer),
-                          const SizedBox(width: AppSpacing.sm),
-                          Text('Apply Promo Code / Coupon', style: AppTextStyles.body),
-                          const Spacer(),
-                          const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.outline, size: 16),
+                          Text('ORDER SUMMARY BILL', style: AppTextStyles.caption.copyWith(fontSize: 11, letterSpacing: 1.5)),
+                          const SizedBox(height: AppSpacing.md),
+                          _buildBillRow('Subtotal (${cartState.totalItemCount} items)', currencyNotifier.formatPrice(cartState.subtotal)),
+                          const SizedBox(height: AppSpacing.xs),
+                          if (cartState.appliedCoupon != null) ...[
+                            _buildBillRow(
+                              'Coupon Discount (${cartState.appliedCoupon!.code})',
+                              '-${currencyNotifier.formatPrice(cartState.discountAmount)}',
+                              isDiscount: true,
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                          ],
+                          _buildBillRow('Platform Fee', currencyNotifier.formatPrice(cartState.platformFee)),
+                          const SizedBox(height: AppSpacing.xs),
+                          _buildBillRow(
+                            'Shipping (DHL Express)',
+                            cartState.shippingFee == 0 ? 'FREE' : currencyNotifier.formatPrice(cartState.shippingFee),
+                            isHighlighted: cartState.shippingFee == 0,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                            child: Divider(color: AppColors.outlineVariant),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('FINAL AMOUNT', style: AppTextStyles.title.copyWith(fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text(
+                                currencyNotifier.formatPrice(cartState.finalTotal),
+                                style: AppTextStyles.headline.copyWith(fontSize: 22, color: AppColors.primaryContainer),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ).animate().fadeIn(delay: 300.ms),
                   ],
                 ),
               ),
+              const SizedBox(height: AppSpacing.md),
               GlassCard(
                 padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
+                child: Row(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Total Amount', style: AppTextStyles.bodySmall),
-                        Text('\$610.99', style: AppTextStyles.displayLarge.copyWith(fontSize: 22)),
+                        Text('TOTAL PAYABLE', style: AppTextStyles.caption.copyWith(fontSize: 10)),
+                        Text(currencyNotifier.formatPrice(cartState.finalTotal), style: AppTextStyles.headline.copyWith(fontSize: 20)),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    const Spacer(),
                     PrimaryButton(
-                      label: 'Pay & Confirm Order',
+                      label: 'Place Order',
                       icon: Icons.check_circle_outline_rounded,
-                      width: double.infinity,
-                      onPressed: () => context.go('/checkout/confirmation/success'),
+                      onPressed: () => context.push('/checkout/confirmation/success'),
                     ),
                   ],
                 ),
@@ -158,6 +200,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBillRow(String label, String value, {bool isDiscount = false, bool isHighlighted = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: AppTextStyles.bodySmall),
+        Text(
+          value,
+          style: AppTextStyles.bodySmall.copyWith(
+            color: isDiscount
+                ? AppColors.primaryContainer
+                : isHighlighted
+                    ? AppColors.primaryContainer
+                    : AppColors.primary,
+            fontWeight: isDiscount || isHighlighted ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ],
     );
   }
 }

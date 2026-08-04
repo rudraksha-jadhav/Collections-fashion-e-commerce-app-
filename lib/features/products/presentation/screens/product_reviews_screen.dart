@@ -165,14 +165,16 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                   children: [
                     const Icon(Icons.rate_review_outlined, color: AppColors.primaryContainer, size: 22),
                     const SizedBox(width: AppSpacing.md),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Own this piece?', style: AppTextStyles.title.copyWith(fontSize: 15)),
-                        Text('Share fit advice & earn 100 VIP points', style: AppTextStyles.bodySmall),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Own this piece?', style: AppTextStyles.title.copyWith(fontSize: 15)),
+                          Text('Share fit advice & earn 100 VIP points', style: AppTextStyles.bodySmall, overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: AppSpacing.xs),
                     const Icon(Icons.add_rounded, color: AppColors.primaryContainer, size: 22),
                   ],
                 ),
