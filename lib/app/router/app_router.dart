@@ -62,62 +62,206 @@ class AppRouter {
     navigatorKey: rootNavigatorKey,
     initialLocation: '/splash',
     routes: [
-      // Splash & Onboarding
-      GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
-      GoRoute(path: '/onboarding', builder: (context, state) => const OnboardingScreen()),
+      // Splash & Onboarding (Root Navigator)
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
 
-      // Auth
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
-      GoRoute(path: '/otp', builder: (context, state) => const OtpScreen()),
-      GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordScreen()),
+      // Auth (Root Navigator)
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/signup',
+        builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/otp',
+        builder: (context, state) => const OtpScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
 
-      // Persistent Shell Navigation (Home, Discover, Cart, Settings)
+      // Persistent Shell Navigation (Shell Navigator)
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         builder: (context, state, child) => MainShellLayout(child: child),
         routes: [
-          GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-          GoRoute(path: '/discover', builder: (context, state) => const DiscoverScreen()),
-          GoRoute(path: '/cart', builder: (context, state) => const CartScreen()),
-          GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
+          GoRoute(
+            parentNavigatorKey: shellNavigatorKey,
+            path: '/home',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            parentNavigatorKey: shellNavigatorKey,
+            path: '/discover',
+            builder: (context, state) => const DiscoverScreen(),
+          ),
+          GoRoute(
+            parentNavigatorKey: shellNavigatorKey,
+            path: '/cart',
+            builder: (context, state) => const CartScreen(),
+          ),
+          GoRoute(
+            parentNavigatorKey: shellNavigatorKey,
+            path: '/settings',
+            builder: (context, state) => const SettingsScreen(),
+          ),
         ],
       ),
 
-      // Sub-views & Secondary Screens
-      GoRoute(path: '/discover/stories', builder: (context, state) => const FashionStoriesScreen()),
-      GoRoute(path: '/discover/story/detail', builder: (context, state) => const FashionStoryDetailScreen()),
-      GoRoute(path: '/discover/brand', builder: (context, state) => const BrandCollectionScreen()),
+      // Secondary Screens (Root Navigator)
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/discover/stories',
+        builder: (context, state) => const FashionStoriesScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/discover/story/detail',
+        builder: (context, state) => const FashionStoryDetailScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/discover/brand',
+        builder: (context, state) => const BrandCollectionScreen(),
+      ),
 
-      GoRoute(path: '/categories', builder: (context, state) => const CategoriesScreen()),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/categories',
+        builder: (context, state) => const CategoriesScreen(),
+      ),
 
-      GoRoute(path: '/products', builder: (context, state) => const ProductListScreen()),
-      GoRoute(path: '/product-details', builder: (context, state) => const ProductDetailsScreen()),
-      GoRoute(path: '/products/image-viewer', builder: (context, state) => const FullscreenProductImageViewer()),
-      GoRoute(path: '/products/size-guide', builder: (context, state) => const SizeGuideScreen()),
-      GoRoute(path: '/products/reviews', builder: (context, state) => const ProductReviewsScreen()),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/products',
+        builder: (context, state) => const ProductListScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/product-details',
+        builder: (context, state) => const ProductDetailsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/products/image-viewer',
+        builder: (context, state) => const FullscreenProductImageViewer(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/products/size-guide',
+        builder: (context, state) => const SizeGuideScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/products/reviews',
+        builder: (context, state) => const ProductReviewsScreen(),
+      ),
 
-      GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/search',
+        builder: (context, state) => const SearchScreen(),
+      ),
 
-      GoRoute(path: '/cart/coupons', builder: (context, state) => const CouponSelectionScreen()),
-      GoRoute(path: '/checkout', builder: (context, state) => const CheckoutScreen()),
-      GoRoute(path: '/checkout/saved-addresses', builder: (context, state) => const SavedAddressesScreen()),
-      GoRoute(path: '/checkout/add-address', builder: (context, state) => const AddDeliveryAddressScreen()),
-      GoRoute(path: '/checkout/saved-payment', builder: (context, state) => const SavedPaymentMethodsScreen()),
-      GoRoute(path: '/checkout/confirmation/success', builder: (context, state) => const OrderConfirmationScreen()),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/cart/coupons',
+        builder: (context, state) => const CouponSelectionScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/checkout',
+        builder: (context, state) => const CheckoutScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/checkout/saved-addresses',
+        builder: (context, state) => const SavedAddressesScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/checkout/add-address',
+        builder: (context, state) => const AddDeliveryAddressScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/checkout/saved-payment',
+        builder: (context, state) => const SavedPaymentMethodsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/checkout/confirmation/success',
+        builder: (context, state) => const OrderConfirmationScreen(),
+      ),
 
-      GoRoute(path: '/wishlist', builder: (context, state) => const WishlistScreen()),
-      GoRoute(path: '/wishlist/empty', builder: (context, state) => const EmptyWishlistScreen()),
-      GoRoute(path: '/orders', builder: (context, state) => const OrdersScreen()),
-      GoRoute(path: '/orders/track', builder: (context, state) => const TrackOrderScreen()),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/wishlist',
+        builder: (context, state) => const WishlistScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/wishlist/empty',
+        builder: (context, state) => const EmptyWishlistScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/orders',
+        builder: (context, state) => const OrdersScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/orders/track',
+        builder: (context, state) => const TrackOrderScreen(),
+      ),
 
-      GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
-      GoRoute(path: '/profile/edit', builder: (context, state) => const EditProfileScreen()),
-      GoRoute(path: '/settings/security', builder: (context, state) => const AccountSecurityScreen()),
-      GoRoute(path: '/settings/language-region', builder: (context, state) => const LanguageRegionScreen()),
-      GoRoute(path: '/help', builder: (context, state) => const HelpScreen()),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/profile/edit',
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/settings/security',
+        builder: (context, state) => const AccountSecurityScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/settings/language-region',
+        builder: (context, state) => const LanguageRegionScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/help',
+        builder: (context, state) => const HelpScreen(),
+      ),
 
-      GoRoute(path: '/notifications', builder: (context, state) => const NotificationCenterScreen()),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/notifications',
+        builder: (context, state) => const NotificationCenterScreen(),
+      ),
     ],
   );
 }
