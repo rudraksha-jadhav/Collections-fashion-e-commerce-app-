@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../app/theme/app_colors.dart';
@@ -14,15 +14,16 @@ import '../../../../core/widgets/cards/glass_card.dart';
 
 import '../../../../core/widgets/chips/size_chip.dart';
 import '../../../../core/widgets/notifications/glass_toast.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
 
-class ProductDetailsScreen extends StatefulWidget {
+class ProductDetailsScreen extends ConsumerStatefulWidget {
   const ProductDetailsScreen({super.key});
 
   @override
-  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+  ConsumerState<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
 
-class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   String _selectedSize = 'M';
   final List<String> _sizes = ['S', 'M', 'L', 'XL'];
 
@@ -99,36 +100,33 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         'LIMITED EDITION DROP',
                         style: AppTextStyles.caption,
                       ),
-                      const SizedBox(height: AppSpacing.xs),
+                      const SizedBox(height: 4),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: Text(
-                              'Revival Hoodies',
-                              style: AppTextStyles.displayLarge.copyWith(fontSize: 28),
-                            ),
+                          Text(
+                            'Revival Hoodies',
+                            style: AppTextStyles.headline.copyWith(fontSize: 26),
                           ),
-                          const SizedBox(width: AppSpacing.sm),
                           Text(
                             '\$320.99',
-                            style: AppTextStyles.headline.copyWith(fontSize: 24),
+                            style: AppTextStyles.headline.copyWith(
+                              fontSize: 22,
+                              color: AppColors.primaryContainer,
+                            ),
                           ),
                         ],
-                      ).animate().fadeIn().slideY(begin: 0.1),
+                      ),
                       const SizedBox(height: AppSpacing.md),
                       Text(
-                        'Heavyweight 480GSM organic cotton hoodie featuring vintage distressing and back graphics.',
+                        'Heavyweight organic cotton hoodie featuring high-density archival graphics and a signature relaxed streetwear silhouette.',
                         style: AppTextStyles.body.copyWith(color: AppColors.onSurfaceVariant),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'SELECT SIZE',
-                            style: AppTextStyles.caption,
-                          ),
+                          Text('SELECT SIZE', style: AppTextStyles.caption),
                           GestureDetector(
                             onTap: () => context.push('/products/size-guide'),
                             child: Text(
@@ -139,28 +137,24 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ],
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: _sizes.map((size) {
-                            final isSelected = _selectedSize == size;
-                            return Padding(
-                              padding: const EdgeInsets.only(right: AppSpacing.sm),
-                              child: SizeChip(
-                                label: size,
-                                isSelected: isSelected,
-                                onTap: () {
-                                  HapticFeedback.selectionClick();
-                                  setState(() {
-                                    _selectedSize = size;
-                                  });
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                      Row(
+                        children: _sizes.map((size) {
+                          final isSelected = _selectedSize == size;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: AppSpacing.sm),
+                            child: SizeChip(
+                              label: size,
+                              isSelected: isSelected,
+                              onTap: () {
+                                setState(() {
+                                  _selectedSize = size;
+                                });
+                              },
+                            ),
+                          );
+                        }).toList(),
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      const SizedBox(height: AppSpacing.xl),
                       GlassCard(
                         padding: const EdgeInsets.all(AppSpacing.md),
                         onTap: () => context.push('/products/reviews'),
@@ -198,6 +192,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       child: GlassButton(
                         label: 'BUY NOW',
                         onPressed: () {
+                          ref.read(cartProvider.notifier).addItem(
+                            title: 'Revival Hoodies',
+                            price: 320.99,
+                            image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
+                            size: _selectedSize,
+                          );
                           HapticFeedback.mediumImpact();
                           context.push('/checkout');
                         },
@@ -213,9 +213,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         label: 'Add To Bag',
                         icon: Icons.shopping_bag_outlined,
                         onPressed: () {
+                          ref.read(cartProvider.notifier).addItem(
+                            title: 'Revival Hoodies',
+                            price: 320.99,
+                            image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
+                            size: _selectedSize,
+                          );
+                          HapticFeedback.mediumImpact();
                           GlassToast.show(
                             context,
-                            message: 'Added Revival Hoodie to Bag!',
+                            message: 'Added Revival Hoodie (Size $_selectedSize) to Bag!',
                             icon: Icons.shopping_bag_outlined,
                           );
                           context.push('/cart');

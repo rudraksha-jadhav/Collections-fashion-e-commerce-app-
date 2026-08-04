@@ -72,7 +72,8 @@ class CartState {
     if (appliedCoupon!.percentageDiscount > 0) {
       return subtotal * (appliedCoupon!.percentageDiscount / 100);
     }
-    return appliedCoupon!.flatDiscount;
+    final flat = appliedCoupon!.flatDiscount;
+    return flat > subtotal ? subtotal : flat;
   }
 
   double get platformFee {
