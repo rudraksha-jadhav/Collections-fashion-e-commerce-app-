@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
+import '../../../orders/presentation/providers/orders_provider.dart';
 
-class OrderConfirmationScreen extends StatelessWidget {
-  const OrderConfirmationScreen({super.key});
+class OrderConfirmationScreen extends ConsumerWidget {
+  final String? orderId;
+
+  const OrderConfirmationScreen({super.key, this.orderId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final latestOrder = ref.watch(latestOrderProvider);
+    final displayOrderId = orderId ?? latestOrder?.orderId ?? '#ORD-98421';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -40,7 +47,7 @@ class OrderConfirmationScreen extends StatelessWidget {
               ).animate().fadeIn(delay: 200.ms),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Thank you for your purchase. Order #ORD-98421 has been placed successfully and is being prepared for express delivery.',
+                'Thank you for your purchase. Order $displayOrderId has been placed successfully and is being prepared for express delivery.',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodySmall,
               ).animate().fadeIn(delay: 300.ms),
@@ -60,7 +67,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                 label: 'Track Order Status',
                 icon: Icons.local_shipping_outlined,
                 width: double.infinity,
-                onPressed: () => context.go('/orders/track'),
+                onPressed: () => context.go('/orders/track?orderId=${Uri.encodeComponent(displayOrderId)}'),
               ),
               const SizedBox(height: AppSpacing.sm),
               TextButton(

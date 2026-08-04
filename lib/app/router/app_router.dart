@@ -126,12 +126,24 @@ class AppRouter {
       GoRoute(path: '/checkout/saved-addresses', pageBuilder: (context, state) => _buildFadeSlidePage(const SavedAddressesScreen(), state)),
       GoRoute(path: '/checkout/add-address', pageBuilder: (context, state) => _buildFadeSlidePage(const AddDeliveryAddressScreen(), state)),
       GoRoute(path: '/checkout/saved-payment', pageBuilder: (context, state) => _buildFadeSlidePage(const SavedPaymentMethodsScreen(), state)),
-      GoRoute(path: '/checkout/confirmation/success', pageBuilder: (context, state) => _buildFadeSlidePage(const OrderConfirmationScreen(), state)),
+      GoRoute(
+        path: '/checkout/confirmation/success',
+        pageBuilder: (context, state) => _buildFadeSlidePage(
+          OrderConfirmationScreen(orderId: state.uri.queryParameters['orderId']),
+          state,
+        ),
+      ),
 
       GoRoute(path: '/wishlist', pageBuilder: (context, state) => _buildFadeSlidePage(const WishlistScreen(), state)),
       GoRoute(path: '/wishlist/empty', pageBuilder: (context, state) => _buildFadeSlidePage(const EmptyWishlistScreen(), state)),
       GoRoute(path: '/orders', pageBuilder: (context, state) => _buildFadeSlidePage(const OrdersScreen(), state)),
-      GoRoute(path: '/orders/track', pageBuilder: (context, state) => _buildFadeSlidePage(const TrackOrderScreen(), state)),
+      GoRoute(
+        path: '/orders/track',
+        pageBuilder: (context, state) => _buildFadeSlidePage(
+          TrackOrderScreen(orderId: state.uri.queryParameters['orderId']),
+          state,
+        ),
+      ),
 
       GoRoute(path: '/profile', pageBuilder: (context, state) => _buildFadeSlidePage(const ProfileScreen(), state)),
       GoRoute(path: '/profile/edit', pageBuilder: (context, state) => _buildFadeSlidePage(const EditProfileScreen(), state)),

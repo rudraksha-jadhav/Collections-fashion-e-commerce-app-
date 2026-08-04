@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../orders/presentation/providers/orders_provider.dart';
 import '../../../settings/presentation/providers/currency_provider.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -191,7 +193,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     PrimaryButton(
                       label: 'Place Order',
                       icon: Icons.check_circle_outline_rounded,
-                      onPressed: () => context.push('/checkout/confirmation/success'),
+                      onPressed: () {
+                        HapticFeedback.heavyImpact();
+                        final order = ref.read(ordersProvider.notifier).placeOrder(
+                          items: cartState.items,
+                          totalAmount: cartState.finalTotal,
+                          deliveryAddress: '742 Evergreen Terrace, Suite 4B, New York, NY 10001',
+                          paymentMethod: _paymentMethods[_selectedPayment],
+                        );
+                        context.go('/checkout/confirmation/success?orderId=${Uri.encodeComponent(order.orderId)}');
+                      },
                     ),
                   ],
                 ),
