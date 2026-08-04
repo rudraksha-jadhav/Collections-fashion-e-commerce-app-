@@ -8,6 +8,8 @@ import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
 import '../../../../core/widgets/navigation/top_header.dart';
+import '../../../../core/widgets/notifications/glass_toast.dart';
+import '../../../../core/widgets/sheets/biometric_auth_sheet.dart';
 
 class AccountSecurityScreen extends StatefulWidget {
   const AccountSecurityScreen({super.key});
@@ -74,8 +76,10 @@ class _AccountSecurityScreenState extends State<AccountSecurityScreen> {
                 width: double.infinity,
                 onPressed: () {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Revoked all other active sessions!')),
+                  GlassToast.show(
+                    context,
+                    message: 'Revoked all other active sessions!',
+                    icon: Icons.security_rounded,
                   );
                 },
               ),
@@ -101,7 +105,13 @@ class _AccountSecurityScreenState extends State<AccountSecurityScreen> {
                 leading: GlassCard(
                   borderRadius: AppRadius.radiusFull,
                   padding: const EdgeInsets.all(AppSpacing.sm + 2),
-                  onTap: () => context.pop(),
+                  onTap: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
                   child: const Icon(Icons.arrow_back_rounded, size: 20, color: AppColors.primary),
                 ),
               ),
@@ -121,16 +131,25 @@ class _AccountSecurityScreenState extends State<AccountSecurityScreen> {
               GlassCard(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 onTap: () {
-                  setState(() {
-                    _isBiometricEnabled = !_isBiometricEnabled;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        _isBiometricEnabled ? 'Biometric FaceID / Fingerprint Login Enabled!' : 'Biometric Login Disabled.',
-                      ),
-                    ),
-                  );
+                  if (!_isBiometricEnabled) {
+                    BiometricAuthSheet.show(
+                      context,
+                      onSuccess: () {
+                        setState(() {
+                          _isBiometricEnabled = true;
+                        });
+                      },
+                    );
+                  } else {
+                    setState(() {
+                      _isBiometricEnabled = false;
+                    });
+                    GlassToast.show(
+                      context,
+                      message: 'Biometric Login Disabled',
+                      icon: Icons.fingerprint_rounded,
+                    );
+                  }
                 },
                 child: Row(
                   children: [
@@ -140,7 +159,7 @@ class _AccountSecurityScreenState extends State<AccountSecurityScreen> {
                         Text('Biometric Login', style: AppTextStyles.title.copyWith(fontSize: 15)),
                         const SizedBox(height: 2),
                         Text(
-                          _isBiometricEnabled ? 'FaceID / Fingerprint Active' : 'FaceID / Fingerprint Quick Sign-In',
+                          _isBiometricEnabled ? 'TouchID / FaceID Active' : 'Enable Fingerprint or FaceID',
                           style: AppTextStyles.bodySmall,
                         ),
                       ],
@@ -150,9 +169,25 @@ class _AccountSecurityScreenState extends State<AccountSecurityScreen> {
                       value: _isBiometricEnabled,
                       activeTrackColor: AppColors.primaryContainer,
                       onChanged: (val) {
-                        setState(() {
-                          _isBiometricEnabled = val;
-                        });
+                        if (val) {
+                          BiometricAuthSheet.show(
+                            context,
+                            onSuccess: () {
+                              setState(() {
+                                _isBiometricEnabled = true;
+                              });
+                            },
+                          );
+                        } else {
+                          setState(() {
+                            _isBiometricEnabled = false;
+                          });
+                          GlassToast.show(
+                            context,
+                            message: 'Biometric Login Disabled',
+                            icon: Icons.fingerprint_rounded,
+                          );
+                        }
                       },
                     ),
                   ],
@@ -160,15 +195,9 @@ class _AccountSecurityScreenState extends State<AccountSecurityScreen> {
               ).animate().fadeIn(),
               const SizedBox(height: AppSpacing.sm),
               _buildSecurityOption(
-                title: 'Active Sessions',
-                subtitle: '2 active devices registered — View details',
+                title: 'Active Sessions & Devices',
+                subtitle: 'Manage connected phones & web sessions',
                 onTap: () => _showActiveSessionsSheet(context),
-              ),
-              const Spacer(),
-              PrimaryButton(
-                label: 'Sign Out Of All Devices',
-                width: double.infinity,
-                onPressed: () => context.go('/login'),
               ),
             ],
           ),

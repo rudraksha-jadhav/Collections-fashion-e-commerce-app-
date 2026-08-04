@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radius.dart';
@@ -9,30 +10,18 @@ import '../../../../core/widgets/cards/glass_card.dart';
 import '../../../../core/widgets/cards/product_card.dart';
 import '../../../../core/widgets/collections_bottom_nav.dart';
 import '../../../../core/widgets/navigation/top_header.dart';
+import '../../../../core/widgets/notifications/glass_toast.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
+import '../providers/wishlist_provider.dart';
 
-class WishlistScreen extends StatelessWidget {
+class WishlistScreen extends ConsumerWidget {
   const WishlistScreen({super.key});
 
-  final List<Map<String, String>> _wishlistItems = const [
-    {
-      'title': 'Revival Hoodies',
-      'price': '\$320.99',
-      'image': 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'Solid Hoodies',
-      'price': '\$290.00',
-      'image': 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'Neon Puffer Jacket',
-      'price': '\$450.00',
-      'image': 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80',
-    },
-  ];
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final wishlistItems = ref.watch(wishlistProvider);
+    final cartCount = ref.watch(cartCountProvider);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -58,35 +47,56 @@ class WishlistScreen extends StatelessWidget {
                       child: const Icon(Icons.arrow_back_rounded, size: 20, color: AppColors.primary),
                     ),
                     trailing: Text(
-                      '${_wishlistItems.length} Items',
+                      '${wishlistItems.length} Items',
                       style: AppTextStyles.bodySmall,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Expanded(
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.62,
-                        crossAxisSpacing: AppSpacing.md,
-                        mainAxisSpacing: AppSpacing.lg,
-                      ),
-                      itemCount: _wishlistItems.length,
-                      itemBuilder: (context, index) {
-                        final item = _wishlistItems[index];
-                        return ProductCard(
-                          title: item['title']!,
-                          price: item['price']!,
-                          imageUrl: item['image']!,
-                          onTap: () => context.push('/product-details'),
-                          onAddToCart: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Added ${item['title']} to Bag!')),
-                            );
-                          },
-                        ).animate().fadeIn(delay: (index * 100).ms);
-                      },
-                    ),
+                    child: wishlistItems.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.favorite_border_rounded, size: 64, color: AppColors.outline),
+                                const SizedBox(height: AppSpacing.md),
+                                Text('YOUR WISHLIST IS EMPTY', style: AppTextStyles.title),
+                                const SizedBox(height: AppSpacing.xs),
+                                Text('Save pieces to track upcoming drops', style: AppTextStyles.bodySmall),
+                              ],
+                            ),
+                          )
+                        : GridView.builder(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.62,
+                              crossAxisSpacing: AppSpacing.md,
+                              mainAxisSpacing: AppSpacing.lg,
+                            ),
+                            itemCount: wishlistItems.length,
+                            itemBuilder: (context, index) {
+                              final item = wishlistItems[index];
+                              return ProductCard(
+                                title: item.title,
+                                price: item.price,
+                                imageUrl: item.image,
+                                onTap: () => context.push('/product-details'),
+                                onAddToCart: () {
+                                  final numPrice = double.tryParse(item.price.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 290.00;
+                                  ref.read(cartProvider.notifier).addItem(
+                                        title: item.title,
+                                        price: numPrice,
+                                        image: item.image,
+                                      );
+                                  GlassToast.show(
+                                    context,
+                                    message: 'Added ${item.title} to Bag!',
+                                    icon: Icons.shopping_bag_outlined,
+                                  );
+                                },
+                              ).animate().fadeIn(delay: (index * 100).ms);
+                            },
+                          ),
                   ),
                 ],
               ),
@@ -94,10 +104,11 @@ class WishlistScreen extends StatelessWidget {
           ),
           CollectionsBottomNav(
             currentIndex: 1,
+            cartItemCount: cartCount,
             onTap: (index) {
               if (index == 0) context.go('/home');
               if (index == 2) context.go('/cart');
-              if (index == 3) context.go('/profile');
+              if (index == 3) context.go('/settings');
             },
           ),
         ],

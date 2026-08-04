@@ -9,6 +9,7 @@ import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
 import '../../../../core/widgets/inputs/email_field.dart';
 import '../../../../core/widgets/inputs/password_field.dart';
+import '../../../../core/widgets/sheets/biometric_auth_sheet.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -90,6 +91,22 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: AppSpacing.lg),
               GlassCard(
                 padding: const EdgeInsets.symmetric(vertical: 14, horizontal: AppSpacing.lg),
+                onTap: () => BiometricAuthSheet.show(
+                  context,
+                  onSuccess: () => context.go('/home'),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.fingerprint_rounded, color: AppColors.primaryContainer, size: 20),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text('Biometric Fingerprint Sign In', style: AppTextStyles.buttonText.copyWith(color: AppColors.primary)),
+                  ],
+                ),
+              ).animate().fadeIn(delay: 480.ms),
+              const SizedBox(height: AppSpacing.sm),
+              GlassCard(
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: AppSpacing.lg),
                 onTap: () => context.go('/home'),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -99,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text('Continue with Google', style: AppTextStyles.buttonText.copyWith(color: AppColors.primary)),
                   ],
                 ),
-              ).animate().fadeIn(delay: 500.ms),
+              ).animate().fadeIn(delay: 520.ms),
               const SizedBox(height: AppSpacing.sm),
               GlassCard(
                 padding: const EdgeInsets.symmetric(vertical: 14, horizontal: AppSpacing.lg),
@@ -112,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text('Continue with Phone', style: AppTextStyles.buttonText.copyWith(color: AppColors.primary)),
                   ],
                 ),
-              ).animate().fadeIn(delay: 550.ms),
+              ).animate().fadeIn(delay: 560.ms),
               const SizedBox(height: AppSpacing.xxl),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
