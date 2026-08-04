@@ -201,7 +201,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           deliveryAddress: '742 Evergreen Terrace, Suite 4B, New York, NY 10001',
                           paymentMethod: _paymentMethods[_selectedPayment],
                         );
-                        context.go('/checkout/confirmation/success?orderId=${Uri.encodeComponent(order.orderId)}');
+                        context.go('/checkout/confirmation', extra: order.orderId);
                       },
                     ),
                   ],

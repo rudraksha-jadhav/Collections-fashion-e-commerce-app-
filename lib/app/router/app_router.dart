@@ -54,9 +54,9 @@ import '../../features/settings/presentation/screens/settings_screen.dart';
 
 final GoRouter appRouter = AppRouter.router;
 
-CustomTransitionPage<void> _buildFadeSlidePage(Widget child, GoRouterState state) {
+CustomTransitionPage<void> _buildFadePage(Widget child, GoRouterState state) {
   return CustomTransitionPage<void>(
-    key: ValueKey(state.uri.toString()),
+    key: state.pageKey,
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return FadeTransition(
@@ -73,85 +73,72 @@ class AppRouter {
     initialLocation: '/splash',
     routes: [
       // Splash & Onboarding
-      GoRoute(path: '/splash', pageBuilder: (context, state) => _buildFadeSlidePage(const SplashScreen(), state)),
-      GoRoute(path: '/onboarding', pageBuilder: (context, state) => _buildFadeSlidePage(const OnboardingScreen(), state)),
+      GoRoute(path: '/splash', pageBuilder: (context, state) => _buildFadePage(const SplashScreen(), state)),
+      GoRoute(path: '/onboarding', pageBuilder: (context, state) => _buildFadePage(const OnboardingScreen(), state)),
 
-      // Auth Top Level & Aliases
-      GoRoute(path: '/login', pageBuilder: (context, state) => _buildFadeSlidePage(const LoginScreen(), state)),
-      GoRoute(path: '/signup', pageBuilder: (context, state) => _buildFadeSlidePage(const SignupScreen(), state)),
-      GoRoute(path: '/otp', pageBuilder: (context, state) => _buildFadeSlidePage(const OtpScreen(), state)),
-      GoRoute(path: '/forgot-password', pageBuilder: (context, state) => _buildFadeSlidePage(const ForgotPasswordScreen(), state)),
-
-      GoRoute(
-        path: '/auth',
-        pageBuilder: (context, state) => _buildFadeSlidePage(const LoginScreen(), state),
-        routes: [
-          GoRoute(path: 'login', pageBuilder: (context, state) => _buildFadeSlidePage(const LoginScreen(), state)),
-          GoRoute(path: 'signup', pageBuilder: (context, state) => _buildFadeSlidePage(const SignupScreen(), state)),
-          GoRoute(path: 'otp', pageBuilder: (context, state) => _buildFadeSlidePage(const OtpScreen(), state)),
-          GoRoute(path: 'forgot-password', pageBuilder: (context, state) => _buildFadeSlidePage(const ForgotPasswordScreen(), state)),
-        ],
-      ),
+      // Auth
+      GoRoute(path: '/login', pageBuilder: (context, state) => _buildFadePage(const LoginScreen(), state)),
+      GoRoute(path: '/signup', pageBuilder: (context, state) => _buildFadePage(const SignupScreen(), state)),
+      GoRoute(path: '/otp', pageBuilder: (context, state) => _buildFadePage(const OtpScreen(), state)),
+      GoRoute(path: '/forgot-password', pageBuilder: (context, state) => _buildFadePage(const ForgotPasswordScreen(), state)),
 
       // Persistent Shell Navigation (Home, Discover, Cart, Settings)
       ShellRoute(
         builder: (context, state, child) => MainShellLayout(child: child),
         routes: [
-          GoRoute(path: '/home', pageBuilder: (context, state) => _buildFadeSlidePage(const HomeScreen(), state)),
-          GoRoute(path: '/discover', pageBuilder: (context, state) => _buildFadeSlidePage(const DiscoverScreen(), state)),
-          GoRoute(path: '/cart', pageBuilder: (context, state) => _buildFadeSlidePage(const CartScreen(), state)),
-          GoRoute(path: '/settings', pageBuilder: (context, state) => _buildFadeSlidePage(const SettingsScreen(), state)),
+          GoRoute(path: '/home', pageBuilder: (context, state) => _buildFadePage(const HomeScreen(), state)),
+          GoRoute(path: '/discover', pageBuilder: (context, state) => _buildFadePage(const DiscoverScreen(), state)),
+          GoRoute(path: '/cart', pageBuilder: (context, state) => _buildFadePage(const CartScreen(), state)),
+          GoRoute(path: '/settings', pageBuilder: (context, state) => _buildFadePage(const SettingsScreen(), state)),
         ],
       ),
 
       // Sub-views & Secondary Screens
-      GoRoute(path: '/discover/stories', pageBuilder: (context, state) => _buildFadeSlidePage(const FashionStoriesScreen(), state)),
-      GoRoute(path: '/discover/stories/all', pageBuilder: (context, state) => _buildFadeSlidePage(const FashionStoriesScreen(), state)),
-      GoRoute(path: '/discover/story/detail', pageBuilder: (context, state) => _buildFadeSlidePage(const FashionStoryDetailScreen(), state)),
-      GoRoute(path: '/discover/brand', pageBuilder: (context, state) => _buildFadeSlidePage(const BrandCollectionScreen(), state)),
+      GoRoute(path: '/discover/stories', pageBuilder: (context, state) => _buildFadePage(const FashionStoriesScreen(), state)),
+      GoRoute(path: '/discover/story/detail', pageBuilder: (context, state) => _buildFadePage(const FashionStoryDetailScreen(), state)),
+      GoRoute(path: '/discover/brand', pageBuilder: (context, state) => _buildFadePage(const BrandCollectionScreen(), state)),
 
-      GoRoute(path: '/categories', pageBuilder: (context, state) => _buildFadeSlidePage(const CategoriesScreen(), state)),
+      GoRoute(path: '/categories', pageBuilder: (context, state) => _buildFadePage(const CategoriesScreen(), state)),
 
-      GoRoute(path: '/products', pageBuilder: (context, state) => _buildFadeSlidePage(const ProductListScreen(), state)),
-      GoRoute(path: '/product-details', pageBuilder: (context, state) => _buildFadeSlidePage(const ProductDetailsScreen(), state)),
-      GoRoute(path: '/products/details', pageBuilder: (context, state) => _buildFadeSlidePage(const ProductDetailsScreen(), state)),
-      GoRoute(path: '/products/image-viewer', pageBuilder: (context, state) => _buildFadeSlidePage(const FullscreenProductImageViewer(), state)),
-      GoRoute(path: '/products/size-guide', pageBuilder: (context, state) => _buildFadeSlidePage(const SizeGuideScreen(), state)),
-      GoRoute(path: '/products/reviews', pageBuilder: (context, state) => _buildFadeSlidePage(const ProductReviewsScreen(), state)),
+      GoRoute(path: '/products', pageBuilder: (context, state) => _buildFadePage(const ProductListScreen(), state)),
+      GoRoute(path: '/product-details', pageBuilder: (context, state) => _buildFadePage(const ProductDetailsScreen(), state)),
+      GoRoute(path: '/products/image-viewer', pageBuilder: (context, state) => _buildFadePage(const FullscreenProductImageViewer(), state)),
+      GoRoute(path: '/products/size-guide', pageBuilder: (context, state) => _buildFadePage(const SizeGuideScreen(), state)),
+      GoRoute(path: '/products/reviews', pageBuilder: (context, state) => _buildFadePage(const ProductReviewsScreen(), state)),
 
-      GoRoute(path: '/search', pageBuilder: (context, state) => _buildFadeSlidePage(const SearchScreen(), state)),
+      GoRoute(path: '/search', pageBuilder: (context, state) => _buildFadePage(const SearchScreen(), state)),
 
-      GoRoute(path: '/cart/coupons', pageBuilder: (context, state) => _buildFadeSlidePage(const CouponSelectionScreen(), state)),
-      GoRoute(path: '/checkout', pageBuilder: (context, state) => _buildFadeSlidePage(const CheckoutScreen(), state)),
-      GoRoute(path: '/checkout/saved-addresses', pageBuilder: (context, state) => _buildFadeSlidePage(const SavedAddressesScreen(), state)),
-      GoRoute(path: '/checkout/add-address', pageBuilder: (context, state) => _buildFadeSlidePage(const AddDeliveryAddressScreen(), state)),
-      GoRoute(path: '/checkout/saved-payment', pageBuilder: (context, state) => _buildFadeSlidePage(const SavedPaymentMethodsScreen(), state)),
+      GoRoute(path: '/cart/coupons', pageBuilder: (context, state) => _buildFadePage(const CouponSelectionScreen(), state)),
+      GoRoute(path: '/checkout', pageBuilder: (context, state) => _buildFadePage(const CheckoutScreen(), state)),
+      GoRoute(path: '/checkout/saved-addresses', pageBuilder: (context, state) => _buildFadePage(const SavedAddressesScreen(), state)),
+      GoRoute(path: '/checkout/add-address', pageBuilder: (context, state) => _buildFadePage(const AddDeliveryAddressScreen(), state)),
+      GoRoute(path: '/checkout/saved-payment', pageBuilder: (context, state) => _buildFadePage(const SavedPaymentMethodsScreen(), state)),
       GoRoute(
-        path: '/checkout/confirmation/success',
-        pageBuilder: (context, state) => _buildFadeSlidePage(
-          OrderConfirmationScreen(orderId: state.uri.queryParameters['orderId']),
-          state,
-        ),
+        path: '/checkout/confirmation',
+        pageBuilder: (context, state) {
+          final orderId = state.extra as String?;
+          return _buildFadePage(OrderConfirmationScreen(orderId: orderId), state);
+        },
       ),
 
-      GoRoute(path: '/wishlist', pageBuilder: (context, state) => _buildFadeSlidePage(const WishlistScreen(), state)),
-      GoRoute(path: '/wishlist/empty', pageBuilder: (context, state) => _buildFadeSlidePage(const EmptyWishlistScreen(), state)),
-      GoRoute(path: '/orders', pageBuilder: (context, state) => _buildFadeSlidePage(const OrdersScreen(), state)),
+      GoRoute(path: '/wishlist', pageBuilder: (context, state) => _buildFadePage(const WishlistScreen(), state)),
+      GoRoute(path: '/wishlist/empty', pageBuilder: (context, state) => _buildFadePage(const EmptyWishlistScreen(), state)),
+      GoRoute(path: '/orders', pageBuilder: (context, state) => _buildFadePage(const OrdersScreen(), state)),
       GoRoute(
         path: '/orders/track',
-        pageBuilder: (context, state) => _buildFadeSlidePage(
-          TrackOrderScreen(orderId: state.uri.queryParameters['orderId']),
-          state,
-        ),
+        pageBuilder: (context, state) {
+          final orderId = state.extra as String?;
+          return _buildFadePage(TrackOrderScreen(orderId: orderId), state);
+        },
       ),
 
-      GoRoute(path: '/profile', pageBuilder: (context, state) => _buildFadeSlidePage(const ProfileScreen(), state)),
-      GoRoute(path: '/profile/edit', pageBuilder: (context, state) => _buildFadeSlidePage(const EditProfileScreen(), state)),
-      GoRoute(path: '/settings/security', pageBuilder: (context, state) => _buildFadeSlidePage(const AccountSecurityScreen(), state)),
-      GoRoute(path: '/settings/language-region', pageBuilder: (context, state) => _buildFadeSlidePage(const LanguageRegionScreen(), state)),
-      GoRoute(path: '/help', pageBuilder: (context, state) => _buildFadeSlidePage(const HelpScreen(), state)),
+      GoRoute(path: '/profile', pageBuilder: (context, state) => _buildFadePage(const ProfileScreen(), state)),
+      GoRoute(path: '/profile/edit', pageBuilder: (context, state) => _buildFadePage(const EditProfileScreen(), state)),
+      GoRoute(path: '/settings/security', pageBuilder: (context, state) => _buildFadePage(const AccountSecurityScreen(), state)),
+      GoRoute(path: '/settings/language-region', pageBuilder: (context, state) => _buildFadePage(const LanguageRegionScreen(), state)),
+      GoRoute(path: '/help', pageBuilder: (context, state) => _buildFadePage(const HelpScreen(), state)),
 
-      GoRoute(path: '/notifications', pageBuilder: (context, state) => _buildFadeSlidePage(const NotificationCenterScreen(), state)),
+      GoRoute(path: '/notifications', pageBuilder: (context, state) => _buildFadePage(const NotificationCenterScreen(), state)),
     ],
   );
 }

@@ -66,7 +66,7 @@ class OrdersScreen extends ConsumerWidget {
 
                           return GlassCard(
                             padding: const EdgeInsets.all(AppSpacing.md),
-                            onTap: () => context.push('/orders/track?orderId=${Uri.encodeComponent(order.orderId)}'),
+                            onTap: () => context.push('/orders/track', extra: order.orderId),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

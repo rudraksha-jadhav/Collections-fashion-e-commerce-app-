@@ -67,7 +67,7 @@ class OrderConfirmationScreen extends ConsumerWidget {
                 label: 'Track Order Status',
                 icon: Icons.local_shipping_outlined,
                 width: double.infinity,
-                onPressed: () => context.go('/orders/track?orderId=${Uri.encodeComponent(displayOrderId)}'),
+                onPressed: () => context.go('/orders/track', extra: displayOrderId),
               ),
               const SizedBox(height: AppSpacing.sm),
               TextButton(
