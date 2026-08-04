@@ -64,7 +64,7 @@ class BrandCollectionScreen extends StatelessWidget {
                       title: item['title']!,
                       price: item['price']!,
                       imageUrl: item['image']!,
-                      onTap: () => context.push('/product-details'),
+                      onTap: () => context.push('/product-details', extra: item),
                     ).animate().fadeIn(delay: (index * 100).ms);
                   },
                 ),

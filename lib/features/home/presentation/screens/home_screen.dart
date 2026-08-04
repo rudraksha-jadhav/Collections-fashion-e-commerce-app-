@@ -223,7 +223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     title: item['title']!,
                     price: formattedPrice,
                     imageUrl: item['image']!,
-                    onTap: () => context.push('/product-details'),
+                    onTap: () => context.push('/product-details', extra: item),
                     onAddToCart: () {
                       ref.read(cartProvider.notifier).addItem(
                             title: item['title']!,

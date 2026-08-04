@@ -179,7 +179,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             title: item['title']!,
                             price: item['price']!,
                             imageUrl: item['image']!,
-                            onTap: () => context.push('/product-details'),
+                            onTap: () => context.push('/product-details', extra: item),
                             onAddToCart: () {
                               ref.read(cartProvider.notifier).addItem(
                                     title: item['title']!,

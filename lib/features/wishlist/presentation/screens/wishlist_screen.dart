@@ -80,7 +80,7 @@ class WishlistScreen extends ConsumerWidget {
                                 title: item.title,
                                 price: item.price,
                                 imageUrl: item.image,
-                                onTap: () => context.push('/product-details'),
+                                onTap: () => context.push('/product-details', extra: {'title': item.title, 'price': item.price, 'image': item.image}),
                                 onAddToCart: () {
                                   final numPrice = double.tryParse(item.price.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 290.00;
                                   ref.read(cartProvider.notifier).addItem(

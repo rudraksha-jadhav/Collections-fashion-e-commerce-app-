@@ -172,7 +172,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       parentNavigatorKey: rootNavigatorKey,
       path: '/product-details',
-      builder: (context, state) => const ProductDetailsScreen(),
+      builder: (context, state) => ProductDetailsScreen(product: state.extra as Map<String, dynamic>?),
     ),
     GoRoute(
       parentNavigatorKey: rootNavigatorKey,

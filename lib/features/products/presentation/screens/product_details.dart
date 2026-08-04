@@ -17,7 +17,9 @@ import '../../../../core/widgets/notifications/glass_toast.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
-  const ProductDetailsScreen({super.key});
+  final Map<String, dynamic>? product;
+
+  const ProductDetailsScreen({super.key, this.product});
 
   @override
   ConsumerState<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -29,6 +31,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final title = widget.product?['title'] as String? ?? 'Revival Hoodies';
+    final priceStr = widget.product?['price'] as String? ?? '\$320.99';
+    final numPrice = widget.product?['numPrice'] != null
+        ? (widget.product!['numPrice'] is num ? (widget.product!['numPrice'] as num).toDouble() : 320.99)
+        : (double.tryParse(priceStr.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 320.99);
+    final imageUrl = widget.product?['image'] as String? ?? 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -49,7 +58,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           color: AppColors.surfaceContainerLow,
                         ),
                         child: CachedNetworkImage(
-                          imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
+                          imageUrl: imageUrl,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Shimmer.fromColors(
                             baseColor: AppColors.surfaceContainerLow,
@@ -77,7 +86,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                               onTap: () {
                                 GlassToast.show(
                                   context,
-                                  message: 'Saved Revival Hoodie to Wishlist!',
+                                  message: 'Saved $title to Wishlist!',
                                   icon: Icons.favorite_rounded,
                                 );
                                 context.push('/wishlist');
@@ -104,12 +113,17 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Revival Hoodies',
-                            style: AppTextStyles.headline.copyWith(fontSize: 26),
+                          Expanded(
+                            child: Text(
+                              title,
+                              style: AppTextStyles.headline.copyWith(fontSize: 24),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
-                            '\$320.99',
+                            priceStr.startsWith('\$') ? priceStr : '\$$priceStr',
                             style: AppTextStyles.headline.copyWith(
                               fontSize: 22,
                               color: AppColors.primaryContainer,
@@ -119,7 +133,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       ),
                       const SizedBox(height: AppSpacing.md),
                       Text(
-                        'Heavyweight organic cotton hoodie featuring high-density archival graphics and a signature relaxed streetwear silhouette.',
+                        'Heavyweight organic cotton piece featuring high-density archival graphics and a signature relaxed luxury streetwear silhouette.',
                         style: AppTextStyles.body.copyWith(color: AppColors.onSurfaceVariant),
                       ),
                       const SizedBox(height: AppSpacing.lg),
@@ -193,9 +207,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         label: 'BUY NOW',
                         onPressed: () {
                           ref.read(cartProvider.notifier).addItem(
-                            title: 'Revival Hoodies',
-                            price: 320.99,
-                            image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
+                            title: title,
+                            price: numPrice,
+                            image: imageUrl,
                             size: _selectedSize,
                           );
                           HapticFeedback.mediumImpact();
@@ -214,18 +228,17 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         icon: Icons.shopping_bag_outlined,
                         onPressed: () {
                           ref.read(cartProvider.notifier).addItem(
-                            title: 'Revival Hoodies',
-                            price: 320.99,
-                            image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
+                            title: title,
+                            price: numPrice,
+                            image: imageUrl,
                             size: _selectedSize,
                           );
                           HapticFeedback.mediumImpact();
                           GlassToast.show(
                             context,
-                            message: 'Added Revival Hoodie (Size $_selectedSize) to Bag!',
+                            message: 'Added $title (Size $_selectedSize) to Bag!',
                             icon: Icons.shopping_bag_outlined,
                           );
-                          context.push('/cart');
                         },
                       ),
                     ),
