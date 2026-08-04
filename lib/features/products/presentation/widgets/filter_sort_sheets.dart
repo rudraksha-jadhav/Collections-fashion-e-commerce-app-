@@ -9,6 +9,9 @@ import '../../../../core/widgets/category_chip.dart';
 
 class FilterSortSheets {
   static void showFilterSheet(BuildContext context) {
+    String selectedCategory = 'All';
+    double maxPrice = 500;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -19,8 +22,6 @@ class FilterSortSheets {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            String selectedCategory = 'All';
-            double maxPrice = 500;
             return Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
@@ -92,6 +93,9 @@ class FilterSortSheets {
   }
 
   static void showSortSheet(BuildContext context) {
+    String selectedSort = 'Latest Drop';
+    final options = ['Latest Drop', 'Price: High to Low', 'Price: Low to High', 'Most Popular'];
+
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.surface,
@@ -99,8 +103,6 @@ class FilterSortSheets {
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),
       builder: (context) {
-        String selectedSort = 'Latest Drop';
-        final options = ['Latest Drop', 'Price: High to Low', 'Price: Low to High', 'Most Popular'];
         return StatefulBuilder(
           builder: (context, setState) {
             return Padding(
