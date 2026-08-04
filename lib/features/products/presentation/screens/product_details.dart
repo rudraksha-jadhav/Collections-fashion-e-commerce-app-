@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radius.dart';
 import '../../../../app/theme/app_spacing.dart';
@@ -9,7 +11,9 @@ import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/glass_button.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
+
 import '../../../../core/widgets/chips/size_chip.dart';
+import '../../../../core/widgets/notifications/glass_toast.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({super.key});
@@ -46,6 +50,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         child: CachedNetworkImage(
                           imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
                           fit: BoxFit.cover,
+                          placeholder: (context, url) => Shimmer.fromColors(
+                            baseColor: AppColors.surfaceContainerLow,
+                            highlightColor: AppColors.surfaceContainerHigh,
+                            child: Container(color: AppColors.surfaceContainerLow),
+                          ),
                         ),
                       ),
                     ),
@@ -64,7 +73,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             GlassCard(
                               borderRadius: AppRadius.radiusFull,
                               padding: const EdgeInsets.all(AppSpacing.sm + 2),
-                              onTap: () => context.push('/wishlist'),
+                              onTap: () {
+                                GlassToast.show(
+                                  context,
+                                  message: 'Saved Revival Hoodie to Wishlist!',
+                                  icon: Icons.favorite_rounded,
+                                );
+                                context.push('/wishlist');
+                              },
                               child: const Icon(Icons.favorite_border_rounded, size: 20, color: AppColors.primary),
                             ),
                           ],
@@ -134,6 +150,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 label: size,
                                 isSelected: isSelected,
                                 onTap: () {
+                                  HapticFeedback.selectionClick();
                                   setState(() {
                                     _selectedSize = size;
                                   });
@@ -180,7 +197,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       height: 48,
                       child: GlassButton(
                         label: 'BUY NOW',
-                        onPressed: () => context.push('/checkout'),
+                        onPressed: () {
+                          HapticFeedback.mediumImpact();
+                          context.push('/checkout');
+                        },
                       ),
                     ),
                   ),
@@ -193,8 +213,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         label: 'Add To Bag',
                         icon: Icons.shopping_bag_outlined,
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Added Revival Hoodie to Bag!')),
+                          GlassToast.show(
+                            context,
+                            message: 'Added Revival Hoodie to Bag!',
+                            icon: Icons.shopping_bag_outlined,
                           );
                           context.push('/cart');
                         },

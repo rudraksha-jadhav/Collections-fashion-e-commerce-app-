@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_radius.dart';
@@ -26,7 +27,10 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,13 +65,12 @@ class ProductCard extends StatelessWidget {
                       right: AppSpacing.sm,
                       child: GlassCard(
                         borderRadius: AppRadius.radiusFull,
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        onTap: onAddToCart,
-                        child: const Icon(
-                          Icons.shopping_bag_outlined,
-                          size: 16,
-                          color: AppColors.primary,
-                        ),
+                        padding: const EdgeInsets.all(AppSpacing.xs + 2),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          onAddToCart!();
+                        },
+                        child: const Icon(Icons.add, size: 18, color: AppColors.primary),
                       ),
                     ),
                 ],
@@ -75,23 +78,20 @@ class ProductCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodySmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  price,
-                  style: AppTextStyles.headline.copyWith(fontSize: 15),
-                ),
-              ],
+          Text(
+            title,
+            style: AppTextStyles.body.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            price,
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.primaryContainer,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
