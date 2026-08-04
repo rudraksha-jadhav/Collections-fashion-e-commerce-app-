@@ -54,6 +54,20 @@ import '../../features/settings/presentation/screens/settings_screen.dart';
 
 final GoRouter appRouter = AppRouter.router;
 
+Page<void> _uniquePage(Widget child, GoRouterState state) {
+  return CustomTransitionPage<void>(
+    key: ValueKey('${state.pageKey.value}_${DateTime.now().microsecondsSinceEpoch}'),
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+        child: child,
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 150),
+  );
+}
+
 class AppRouter {
   static final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
   static final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
@@ -63,67 +77,67 @@ class AppRouter {
     initialLocation: '/splash',
     routes: [
       // Splash & Onboarding
-      GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
-      GoRoute(path: '/onboarding', builder: (context, state) => const OnboardingScreen()),
+      GoRoute(path: '/splash', pageBuilder: (context, state) => _uniquePage(const SplashScreen(), state)),
+      GoRoute(path: '/onboarding', pageBuilder: (context, state) => _uniquePage(const OnboardingScreen(), state)),
 
       // Auth
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
-      GoRoute(path: '/otp', builder: (context, state) => const OtpScreen()),
-      GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordScreen()),
+      GoRoute(path: '/login', pageBuilder: (context, state) => _uniquePage(const LoginScreen(), state)),
+      GoRoute(path: '/signup', pageBuilder: (context, state) => _uniquePage(const SignupScreen(), state)),
+      GoRoute(path: '/otp', pageBuilder: (context, state) => _uniquePage(const OtpScreen(), state)),
+      GoRoute(path: '/forgot-password', pageBuilder: (context, state) => _uniquePage(const ForgotPasswordScreen(), state)),
 
       // Persistent Shell Navigation (Home, Discover, Cart, Settings)
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         builder: (context, state, child) => MainShellLayout(child: child),
         routes: [
-          GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-          GoRoute(path: '/discover', builder: (context, state) => const DiscoverScreen()),
-          GoRoute(path: '/cart', builder: (context, state) => const CartScreen()),
-          GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
+          GoRoute(path: '/home', pageBuilder: (context, state) => _uniquePage(const HomeScreen(), state)),
+          GoRoute(path: '/discover', pageBuilder: (context, state) => _uniquePage(const DiscoverScreen(), state)),
+          GoRoute(path: '/cart', pageBuilder: (context, state) => _uniquePage(const CartScreen(), state)),
+          GoRoute(path: '/settings', pageBuilder: (context, state) => _uniquePage(const SettingsScreen(), state)),
         ],
       ),
 
       // Sub-views & Secondary Screens
-      GoRoute(path: '/discover/stories', builder: (context, state) => const FashionStoriesScreen()),
-      GoRoute(path: '/discover/story/detail', builder: (context, state) => const FashionStoryDetailScreen()),
-      GoRoute(path: '/discover/brand', builder: (context, state) => const BrandCollectionScreen()),
+      GoRoute(path: '/discover/stories', pageBuilder: (context, state) => _uniquePage(const FashionStoriesScreen(), state)),
+      GoRoute(path: '/discover/story/detail', pageBuilder: (context, state) => _uniquePage(const FashionStoryDetailScreen(), state)),
+      GoRoute(path: '/discover/brand', pageBuilder: (context, state) => _uniquePage(const BrandCollectionScreen(), state)),
 
-      GoRoute(path: '/categories', builder: (context, state) => const CategoriesScreen()),
+      GoRoute(path: '/categories', pageBuilder: (context, state) => _uniquePage(const CategoriesScreen(), state)),
 
-      GoRoute(path: '/products', builder: (context, state) => const ProductListScreen()),
-      GoRoute(path: '/product-details', builder: (context, state) => const ProductDetailsScreen()),
-      GoRoute(path: '/products/image-viewer', builder: (context, state) => const FullscreenProductImageViewer()),
-      GoRoute(path: '/products/size-guide', builder: (context, state) => const SizeGuideScreen()),
-      GoRoute(path: '/products/reviews', builder: (context, state) => const ProductReviewsScreen()),
+      GoRoute(path: '/products', pageBuilder: (context, state) => _uniquePage(const ProductListScreen(), state)),
+      GoRoute(path: '/product-details', pageBuilder: (context, state) => _uniquePage(const ProductDetailsScreen(), state)),
+      GoRoute(path: '/products/image-viewer', pageBuilder: (context, state) => _uniquePage(const FullscreenProductImageViewer(), state)),
+      GoRoute(path: '/products/size-guide', pageBuilder: (context, state) => _uniquePage(const SizeGuideScreen(), state)),
+      GoRoute(path: '/products/reviews', pageBuilder: (context, state) => _uniquePage(const ProductReviewsScreen(), state)),
 
-      GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
+      GoRoute(path: '/search', pageBuilder: (context, state) => _uniquePage(const SearchScreen(), state)),
 
-      GoRoute(path: '/cart/coupons', builder: (context, state) => const CouponSelectionScreen()),
-      GoRoute(path: '/checkout', builder: (context, state) => const CheckoutScreen()),
-      GoRoute(path: '/checkout/saved-addresses', builder: (context, state) => const SavedAddressesScreen()),
-      GoRoute(path: '/checkout/add-address', builder: (context, state) => const AddDeliveryAddressScreen()),
-      GoRoute(path: '/checkout/saved-payment', builder: (context, state) => const SavedPaymentMethodsScreen()),
+      GoRoute(path: '/cart/coupons', pageBuilder: (context, state) => _uniquePage(const CouponSelectionScreen(), state)),
+      GoRoute(path: '/checkout', pageBuilder: (context, state) => _uniquePage(const CheckoutScreen(), state)),
+      GoRoute(path: '/checkout/saved-addresses', pageBuilder: (context, state) => _uniquePage(const SavedAddressesScreen(), state)),
+      GoRoute(path: '/checkout/add-address', pageBuilder: (context, state) => _uniquePage(const AddDeliveryAddressScreen(), state)),
+      GoRoute(path: '/checkout/saved-payment', pageBuilder: (context, state) => _uniquePage(const SavedPaymentMethodsScreen(), state)),
       GoRoute(
         path: '/checkout/confirmation',
-        builder: (context, state) => OrderConfirmationScreen(orderId: state.extra as String?),
+        pageBuilder: (context, state) => _uniquePage(OrderConfirmationScreen(orderId: state.extra as String?), state),
       ),
 
-      GoRoute(path: '/wishlist', builder: (context, state) => const WishlistScreen()),
-      GoRoute(path: '/wishlist/empty', builder: (context, state) => const EmptyWishlistScreen()),
-      GoRoute(path: '/orders', builder: (context, state) => const OrdersScreen()),
+      GoRoute(path: '/wishlist', pageBuilder: (context, state) => _uniquePage(const WishlistScreen(), state)),
+      GoRoute(path: '/wishlist/empty', pageBuilder: (context, state) => _uniquePage(const EmptyWishlistScreen(), state)),
+      GoRoute(path: '/orders', pageBuilder: (context, state) => _uniquePage(const OrdersScreen(), state)),
       GoRoute(
         path: '/orders/track',
-        builder: (context, state) => TrackOrderScreen(orderId: state.extra as String?),
+        pageBuilder: (context, state) => _uniquePage(TrackOrderScreen(orderId: state.extra as String?), state),
       ),
 
-      GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
-      GoRoute(path: '/profile/edit', builder: (context, state) => const EditProfileScreen()),
-      GoRoute(path: '/settings/security', builder: (context, state) => const AccountSecurityScreen()),
-      GoRoute(path: '/settings/language-region', builder: (context, state) => const LanguageRegionScreen()),
-      GoRoute(path: '/help', builder: (context, state) => const HelpScreen()),
+      GoRoute(path: '/profile', pageBuilder: (context, state) => _uniquePage(const ProfileScreen(), state)),
+      GoRoute(path: '/profile/edit', pageBuilder: (context, state) => _uniquePage(const EditProfileScreen(), state)),
+      GoRoute(path: '/settings/security', pageBuilder: (context, state) => _uniquePage(const AccountSecurityScreen(), state)),
+      GoRoute(path: '/settings/language-region', pageBuilder: (context, state) => _uniquePage(const LanguageRegionScreen(), state)),
+      GoRoute(path: '/help', pageBuilder: (context, state) => _uniquePage(const HelpScreen(), state)),
 
-      GoRoute(path: '/notifications', builder: (context, state) => const NotificationCenterScreen()),
+      GoRoute(path: '/notifications', pageBuilder: (context, state) => _uniquePage(const NotificationCenterScreen(), state)),
     ],
   );
 }
