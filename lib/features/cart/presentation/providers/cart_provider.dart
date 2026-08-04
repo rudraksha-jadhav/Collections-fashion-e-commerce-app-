@@ -29,26 +29,86 @@ class CartItem {
   }
 }
 
-class CartNotifier extends StateNotifier<List<CartItem>> {
+class Coupon {
+  final String code;
+  final String discountText;
+  final double percentageDiscount;
+  final double flatDiscount;
+
+  const Coupon({
+    required this.code,
+    required this.discountText,
+    this.percentageDiscount = 0.0,
+    this.flatDiscount = 0.0,
+  });
+}
+
+class CartState {
+  final List<CartItem> items;
+  final Coupon? appliedCoupon;
+
+  CartState({
+    required this.items,
+    this.appliedCoupon,
+  });
+
+  CartState copyWith({
+    List<CartItem>? items,
+    Coupon? appliedCoupon,
+    bool clearCoupon = false,
+  }) {
+    return CartState(
+      items: items ?? this.items,
+      appliedCoupon: clearCoupon ? null : (appliedCoupon ?? this.appliedCoupon),
+    );
+  }
+
+  double get subtotal {
+    return items.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
+  }
+
+  double get discountAmount {
+    if (appliedCoupon == null) return 0.0;
+    if (appliedCoupon!.percentageDiscount > 0) {
+      return subtotal * (appliedCoupon!.percentageDiscount / 100);
+    }
+    return appliedCoupon!.flatDiscount;
+  }
+
+  double get finalTotal {
+    final result = subtotal - discountAmount;
+    return result < 0 ? 0.0 : result;
+  }
+
+  int get totalItemCount {
+    return items.fold(0, (sum, item) => sum + item.quantity);
+  }
+}
+
+class CartNotifier extends StateNotifier<CartState> {
   CartNotifier()
-      : super([
-          CartItem(
-            id: '1',
-            title: 'Revival Hoodies',
-            price: 320.99,
-            size: 'M',
-            image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
-            quantity: 1,
+      : super(
+          CartState(
+            items: [
+              CartItem(
+                id: '1',
+                title: 'Revival Hoodies',
+                price: 320.99,
+                size: 'M',
+                image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80',
+                quantity: 1,
+              ),
+              CartItem(
+                id: '2',
+                title: 'Solid Hoodies',
+                price: 290.00,
+                size: 'L',
+                image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80',
+                quantity: 1,
+              ),
+            ],
           ),
-          CartItem(
-            id: '2',
-            title: 'Solid Hoodies',
-            price: 290.00,
-            size: 'L',
-            image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80',
-            quantity: 1,
-          ),
-        ]);
+        );
 
   void addItem({
     required String title,
@@ -56,75 +116,98 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
     required String image,
     String size = 'M',
   }) {
-    final existingIndex = state.indexWhere((item) => item.title == title && item.size == size);
+    final existingIndex = state.items.indexWhere((item) => item.title == title && item.size == size);
     if (existingIndex >= 0) {
-      final updated = [...state];
+      final updated = [...state.items];
       updated[existingIndex] = updated[existingIndex].copyWith(
         quantity: updated[existingIndex].quantity + 1,
       );
-      state = updated;
+      state = state.copyWith(items: updated);
     } else {
-      state = [
-        ...state,
-        CartItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          title: title,
-          price: price,
-          size: size,
-          image: image,
-          quantity: 1,
-        ),
-      ];
+      state = state.copyWith(
+        items: [
+          ...state.items,
+          CartItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            title: title,
+            price: price,
+            size: size,
+            image: image,
+            quantity: 1,
+          ),
+        ],
+      );
     }
   }
 
   void incrementQuantity(String id) {
-    state = state.map((item) {
-      if (item.id == id) {
-        return item.copyWith(quantity: item.quantity + 1);
-      }
-      return item;
-    }).toList();
+    state = state.copyWith(
+      items: state.items.map((item) {
+        if (item.id == id) {
+          return item.copyWith(quantity: item.quantity + 1);
+        }
+        return item;
+      }).toList(),
+    );
   }
 
   void decrementQuantity(String id) {
-    state = state
-        .map((item) {
-          if (item.id == id) {
-            if (item.quantity > 1) {
-              return item.copyWith(quantity: item.quantity - 1);
+    state = state.copyWith(
+      items: state.items
+          .map((item) {
+            if (item.id == id) {
+              if (item.quantity > 1) {
+                return item.copyWith(quantity: item.quantity - 1);
+              }
+              return null;
             }
-            return null;
-          }
-          return item;
-        })
-        .whereType<CartItem>()
-        .toList();
+            return item;
+          })
+          .whereType<CartItem>()
+          .toList(),
+    );
   }
 
   void removeItem(String id) {
-    state = state.where((item) => item.id != id).toList();
+    state = state.copyWith(
+      items: state.items.where((item) => item.id != id).toList(),
+    );
   }
 
-  double get totalPrice {
-    return state.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
+  bool applyCouponCode(String code) {
+    final cleaned = code.trim().toUpperCase();
+    if (cleaned == 'COLLECTIONS20') {
+      state = state.copyWith(
+        appliedCoupon: const Coupon(
+          code: 'COLLECTIONS20',
+          discountText: '20% Off Entire Order',
+          percentageDiscount: 20.0,
+        ),
+      );
+      return true;
+    } else if (cleaned == 'LUXE100') {
+      state = state.copyWith(
+        appliedCoupon: const Coupon(
+          code: 'LUXE100',
+          discountText: '\$100 Off VIP Member Discount',
+          flatDiscount: 100.0,
+        ),
+      );
+      return true;
+    }
+    return false;
   }
 
-  int get itemCount {
-    return state.fold(0, (sum, item) => sum + item.quantity);
+  void removeCoupon() {
+    state = state.copyWith(clearCoupon: true);
   }
 }
 
-final cartProvider = StateNotifierProvider<CartNotifier, List<CartItem>>((ref) {
+final cartProvider = StateNotifierProvider<CartNotifier, CartState>((ref) {
   return CartNotifier();
 });
 
-final cartTotalProvider = Provider<double>((ref) {
-  final items = ref.watch(cartProvider);
-  return items.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
-});
-
 final cartCountProvider = Provider<int>((ref) {
-  final items = ref.watch(cartProvider);
-  return items.fold(0, (sum, item) => sum + item.quantity);
+  final cartState = ref.watch(cartProvider);
+  return cartState.totalItemCount;
 });

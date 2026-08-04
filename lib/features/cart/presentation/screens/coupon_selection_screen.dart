@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radius.dart';
@@ -8,18 +9,19 @@ import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/cards/glass_card.dart';
 import '../../../../core/widgets/navigation/top_header.dart';
+import '../../../../core/widgets/notifications/glass_toast.dart';
+import '../providers/cart_provider.dart';
 
-class CouponSelectionScreen extends StatelessWidget {
+class CouponSelectionScreen extends ConsumerWidget {
   const CouponSelectionScreen({super.key});
 
   final List<Map<String, String>> _coupons = const [
-    {'code': 'HYPE20', 'discount': '20% OFF', 'desc': 'Valid on all streetwear drops above \$200'},
-    {'code': 'CREW100', 'discount': '\$100 OFF', 'desc': 'Exclusive Level 3 VIP member reward'},
-    {'code': 'FREESHIP', 'discount': 'FREE SHIPPING', 'desc': 'Worldwide DHL express delivery'},
+    {'code': 'COLLECTIONS20', 'discount': '20% OFF', 'desc': 'Valid on all streetwear drops above \$200'},
+    {'code': 'LUXE100', 'discount': '\$100 OFF', 'desc': 'Exclusive Level 3 VIP member reward'},
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -33,7 +35,13 @@ class CouponSelectionScreen extends StatelessWidget {
                 leading: GlassCard(
                   borderRadius: AppRadius.radiusFull,
                   padding: const EdgeInsets.all(AppSpacing.sm + 2),
-                  onTap: () => context.pop(),
+                  onTap: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
                   child: const Icon(Icons.arrow_back_rounded, size: 20, color: AppColors.primary),
                 ),
               ),
@@ -63,10 +71,15 @@ class CouponSelectionScreen extends StatelessWidget {
                           PrimaryButton(
                             label: 'Apply',
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Applied coupon ${item['code']}!')),
-                              );
-                              context.pop();
+                              final success = ref.read(cartProvider.notifier).applyCouponCode(item['code']!);
+                              if (success) {
+                                GlassToast.show(
+                                  context,
+                                  message: 'Applied coupon ${item['code']}!',
+                                  icon: Icons.local_offer_outlined,
+                                );
+                                context.pop();
+                              }
                             },
                           ),
                         ],
