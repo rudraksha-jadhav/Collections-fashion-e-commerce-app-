@@ -56,7 +56,7 @@ final GoRouter appRouter = AppRouter.router;
 
 CustomTransitionPage<void> _buildFadeSlidePage(Widget child, GoRouterState state) {
   return CustomTransitionPage<void>(
-    key: state.pageKey,
+    key: ValueKey(state.uri.toString()),
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return FadeTransition(
