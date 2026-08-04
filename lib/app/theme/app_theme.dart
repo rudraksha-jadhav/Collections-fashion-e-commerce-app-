@@ -43,6 +43,12 @@ class AppTheme {
         backgroundColor: AppColors.background,
         elevation: 0,
       ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 }

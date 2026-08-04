@@ -61,6 +61,7 @@ class TrackOrderScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.local_shipping_outlined, color: AppColors.primaryContainer, size: 24),
                             const SizedBox(width: AppSpacing.sm),
@@ -73,15 +74,20 @@ class TrackOrderScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryContainer.withValues(alpha: 0.2),
-                            borderRadius: AppRadius.radiusFull,
-                          ),
-                          child: Text(
-                            activeOrder.status.toUpperCase(),
-                            style: AppTextStyles.caption.copyWith(color: AppColors.primaryContainer, fontWeight: FontWeight.bold),
+                        const SizedBox(width: AppSpacing.xs),
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryContainer.withValues(alpha: 0.2),
+                              borderRadius: AppRadius.radiusFull,
+                            ),
+                            child: Text(
+                              activeOrder.status.toUpperCase(),
+                              style: AppTextStyles.caption.copyWith(color: AppColors.primaryContainer, fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ),
                       ],
